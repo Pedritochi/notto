@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mi cuenta - Notto</title>
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* HTML will hold the main background color and the fixed glow elements */
+    html {
+      min-height: 100vh;
+      /* Fondo azul claro sólido */
+      background-color: #e0f7fa; /* Un azul muy claro */
+      background-attachment: scroll; /* Allow background to scroll */
+      position: relative; /* For pseudo-elements */
+      overflow-x: hidden; /* Prevent horizontal scrollbar */
+    }
+
+    /* Background glow elements on HTML pseudo-elements */
+    html::before, html::after {
+      content: '';
+      position: absolute; /* Scrolls with content */
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: -1; /* Behind the body */
+    }
+
+    html::before { /* White glow */
+      width: 300px;
+      height: 300px;
+      top: -50px;
+      left: -50px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    html::after { /* Light blue glow */
+      width: 400px;
+      height: 400px;
+      bottom: -100px;
+      right: -100px;
+      background: rgba(173, 216, 230, 0.4);
+    }
+
+    /* Body will be the main content area, acting as a container for centered elements */
+    body {
+      font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      margin: 0; /* No margin on body itself */
+      padding: 20px; /* This creates the "margin to the sides" effect */
+      display: flex;
+      flex-direction: column; /* Stack content vertically */
+      justify-content: flex-start; /* Align content to top */
+      align-items: center; /* Center flex items horizontally */
+      min-height: 100vh; /* Take full viewport height */
+      color: #202124;
+      box-sizing: border-box;
+      overflow-y: auto; /* Allow vertical scrolling if content exceeds viewport */
+      overflow-x: hidden;
+      position: relative; /* For z-index if needed */
+      /* Removed all glassy styles from body */
+    }
+
+    /* Profile Picture Container */
+    .profile-picture-container {
+      width: 120px; /* Size of the circle */
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden; /* Clip image to circle */
+      margin-bottom: 30px; /* Space below the image */
+      display: flex; /* To center the image if it's smaller */
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0; /* Prevent shrinking on small screens */
+      position: relative; /* For inner shine pseudo-element */
+
+      /* Glassy styles for the circle */
+      background-color: rgba(255, 255, 255, 0.6); /* More opaque white for the circle */
+      backdrop-filter: blur(20px) saturate(180%) brightness(120%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%) brightness(120%);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15),
+                  0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+                  0 0 0 3px rgba(255, 255, 255, 0.3) inset;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+
+    .profile-picture-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.2) 0%,
+        transparent 20%,
+        transparent 80%,
+        rgba(255, 255, 255, 0.15) 100%
+      );
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    .profile-picture-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Ensure image covers the circle */
+      border-radius: 50%; /* Ensure image itself is clipped */
+    }
+
+    h2 {
+      font-size: 3em;
+      margin-bottom: 22px;
+      color: #202124;
+      font-weight: 500;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 600px; /* Limit width for readability */
+      width: 100%; /* Ensure it's responsive */
+      text-align: center;
+      box-sizing: border-box; /* Include padding in width */
+    }
+    h2 span#username {
+      color: #1a73e8;
+      font-weight: 600;
+    }
+    p {
+      font-size: 1.4em;
+      margin-bottom: 45px;
+      color: #5f6368;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      max-width: 600px; /* Limit width for readability */
+      width: 100%; /* Ensure it's responsive */
+      text-align: center;
+      box-sizing: border-box; /* Include padding in width */
+    }
+    p span#email {
+      font-weight: 500;
+      color: #202124;
+    }
+
+    /* Account Navigation Bar */
+    .account-nav {
+      display: flex;
+      flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+      justify-content: center;
+      gap: 15px; /* Space between buttons */
+      margin-top: 30px; /* Space above nav */
+      margin-bottom: 40px; /* Space below nav */
+      padding: 15px 20px;
+      border-radius: 25px; /* Rounded corners for the bar */
+      width: 100%; /* Take full width of its parent (body's padding) */
+      max-width: 500px; /* Limit width */
+      box-sizing: border-box;
+      margin-left: auto; /* Center horizontally */
+      margin-right: auto; /* Center horizontally */
+
+      /* Glassy styles for the nav bar */
+      background-color: rgba(255, 255, 255, 0.3); /* More transparent than profile pic */
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1),
+                  0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    .account-nav button {
+      flex-grow: 1; /* Allow buttons to grow */
+      min-width: 120px; /* Minimum width for buttons */
+      background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+      color: #ffffff;
+      border: none;
+      padding: 12px 20px; /* Smaller padding for nav buttons */
+      border-radius: 9999px;
+      font-size: 1em; /* Smaller font size */
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      box-sizing: border-box;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(26, 115, 232, 0.3),
+                  0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+      position: relative;
+      overflow: hidden;
+    }
+    .account-nav button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 200%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 40%,
+        rgba(255, 255, 255, 0.1) 60%,
+        transparent 100%
+      );
+      transform: skewX(-20deg);
+      transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+      pointer-events: none;
+    }
+    .account-nav button:hover::before {
+      transform: translateX(100%) skewX(-20deg);
+    }
+    .account-nav button:hover {
+      background: linear-gradient(135deg, #3a7ae8 0%, #176cdb 100%);
+      box-shadow: 0 6px 20px rgba(26, 115, 232, 0.4),
+                  0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+      transform: translateY(-2px) scale(1.01);
+    }
+    .account-nav button:active {
+      background: linear-gradient(135deg, #326ecf 0%, #1460c9 100%);
+      box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
+      transform: translateY(0) scale(1);
+    }
+
+    /* Dynamic Content Display Area */
+    #contentDisplay {
+      margin-top: 30px; /* Space above content area */
+      padding: 30px;
+      border-radius: 25px;
+      width: 100%; /* Take full width of its parent (body's padding) */
+      max-width: 500px; /* Limit width */
+      box-sizing: border-box;
+      text-align: left; /* Content inside should be left-aligned */
+      min-height: 150px; /* Ensure it has some height even if content is small */
+      display: none; /* Hidden by default */
+      opacity: 0; /* Start invisible for fade-in */
+      transition: opacity 0.5s ease-in-out; /* Smooth fade transition */
+      margin-left: auto; /* Center horizontally */
+      margin-right: auto; /* Center horizontally */
+
+      /* Glassy styles for content area */
+      background-color: rgba(255, 255, 255, 0.4); /* Slightly more opaque than body */
+      backdrop-filter: blur(25px) saturate(190%) brightness(115%);
+      -webkit-backdrop-filter: blur(25px) saturate(190%) brightness(115%);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18),
+                  0 0 0 1px rgba(255, 255, 255, 0.6) inset,
+                  0 0 0 3px rgba(255, 255, 255, 0.25) inset;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+    }
+
+    #contentDisplay.show {
+      display: block; /* Show when active */
+      opacity: 1; /* Fade in */
+    }
+
+    #contentDisplay h3 {
+      font-size: 1.8em;
+      margin-bottom: 15px;
+      color: #1a73e8; /* Blue for subheadings */
+      font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    #contentDisplay ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    #contentDisplay ul li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      color: #202124;
+      font-size: 1.1em;
+    }
+
+    #contentDisplay ul li:last-child {
+      border-bottom: none;
+    }
+
+    /* Responsive adjustments for nav and content area */
+    @media (max-width: 480px) {
+      body {
+        padding: 10px; /* Smaller padding on very small screens */
+      }
+      .account-nav button {
+        min-width: unset; /* Allow buttons to shrink more */
+        width: 100%; /* Stack buttons vertically */
+      }
+      .account-nav {
+        padding: 15px;
+        gap: 10px;
+      }
+      #contentDisplay {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-picture-container">
+    <img id="profilePic" src="/placeholder.svg?height=120&width=120" alt="Foto de perfil">
+  </div>
+
+  <h2>Bienvenido, <span id="username"></span></h2>
+  <p>Correo: <span id="email"></span></p>
+
+  <nav class="account-nav">
+    <button data-section="userdata">Tus datos</button>
+    <button data-section="security">Seguridad</button>
+    <button data-section="privacy">Privacidad</button>
+    <button data-section="logout">Cerrar Sesión</button>
+  </nav>
+
+  <div id="contentDisplay">
+    <!-- Content will be loaded here -->
+    <p style="text-align: center; color: #5f6368;">Selecciona una opción para ver los detalles.</p>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const usernameSpan = document.getElementById("username");
+      const emailSpan = document.getElementById("email");
+      const profilePic = document.getElementById("profilePic");
+      const accountNav = document.querySelector(".account-nav");
+      const contentDisplay = document.getElementById("contentDisplay");
+
+      // Simulate fetching user data
+      const userData = {
+        username: "UsuarioEjemplo",
+        email: "usuario.ejemplo@dominio.com",
+      };
+
+      if (usernameSpan) {
+        usernameSpan.textContent = userData.username;
+      }
+      if (emailSpan) {
+        emailSpan.textContent = userData.email;
+      }
+
+      // Set the profile picture source dynamically
+      if (profilePic) {
+        // In a real application, you would construct the URL like this:
+        // profilePic.src = `/sources/profilepic/${userData.username}.png`; // Assuming .png or .jpg
+        // For this v0 preview, we use a placeholder.
+        profilePic.alt = `Foto de perfil de ${userData.username}`;
+        profilePic.onerror = () => {
+          profilePic.src = `/placeholder.svg?height=120&width=120`; // Fallback to generic placeholder
+        };
+      }
+
+      // Function to load content
+      async function loadContent(section) {
+        if (section === "logout") {
+          window.location.href = '/logout.html'; // Redirect for logout
+          return;
+        }
+
+        const urlMap = {
+          userdata: '/account/userdata.html',
+          security: '/account/security.html',
+          privacy: '/account/privacy.html',
+        };
+
+        const url = urlMap[section];
+        if (!url) {
+          contentDisplay.innerHTML = `<p style="text-align: center; color: red;">Contenido no encontrado para ${section}.</p>`;
+          return;
+        }
+
+        // Hide content, then load, then show
+        contentDisplay.style.opacity = '0';
+        contentDisplay.classList.remove('show');
+
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          const htmlContent = await response.text();
+
+          // Use a timeout to allow opacity transition to complete before changing content
+          setTimeout(() => {
+            contentDisplay.innerHTML = htmlContent;
+            contentDisplay.classList.add('show'); // Trigger fade-in
+          }, 300); // Half of the transition duration
+        } catch (error) {
+          console.error("Error loading content:", error);
+          contentDisplay.innerHTML = `<p style="text-align: center; color: red;">Error al cargar el contenido: ${error.message}</p>`;
+          contentDisplay.classList.add('show'); // Show error message
+        }
+      }
+
+      // Event listener for navigation buttons
+      accountNav.addEventListener("click", (event) => {
+        const targetButton = event.target.closest("button");
+        if (targetButton && targetButton.dataset.section) {
+          loadContent(targetButton.dataset.section);
+        }
+      });
+    });
+  </script>
+</body>
+</html>

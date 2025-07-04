@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notto - Simple, Gratuita, Directa</title>
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* Base styles (Mobile-first approach) */
+  body {
+    font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column; /* Allow content to stack vertically */
+    justify-content: flex-start; /* Align content to the top */
+    align-items: center;
+    min-height: 100vh;
+    /* Fondo con degradado invertido */
+    background: linear-gradient(135deg, #aaddff 0%, #66bbff 25%, #4285f4 50%, #007bff 75%, #0056b3 100%);
+    background-attachment: fixed; /* ¡Esta es la clave para eliminar el hueco! */
+    color: #202124;
+    box-sizing: border-box;
+    overflow-y: auto; /* Allow vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    position: relative;
+  }
+  body::before, body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    z-index: -1;
+  }
+  body::before {
+    width: 300px;
+    height: 300px;
+    top: -50px;
+    left: -50px;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  body::after {
+    width: 400px;
+    height: 400px;
+    bottom: -100px;
+    right: -100px;
+    background: rgba(173, 216, 230, 0.4);
+  }
+
+  /* General container for glassy elements */
+  .glassy-card {
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(30px) saturate(200%) brightness(110%);
+    -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(110%);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+                0 0 0 4px rgba(255, 255, 255, 0.2) inset;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    position: relative;
+    overflow: hidden;
+  }
+  .glassy-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      transparent 20%,
+      transparent 80%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* Main Hero Container */
+  .hero-container {
+    padding: 40px;
+    border-radius: 26px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    margin: 20px; /* Add margin to separate from other sections */
+  }
+
+  h1 {
+    font-size: 2.6em;
+    margin-bottom: 20px;
+    color: #202124;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    color: #202124;
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  p {
+    font-size: 1.3em;
+    margin-bottom: 30px;
+    color: #5f6368;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  button {
+    background: linear-gradient(135deg, #4285f4 0%, #1a73e8 100%);
+    color: #ffffff;
+    border: none;
+    padding: 18px 35px;
+    border-radius: 9999px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    width: 100%;
+    box-sizing: border-box;
+    font-weight: 500;
+    box-shadow: 0 8px 25px rgba(26, 115, 232, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+    position: relative;
+    overflow: hidden;
+  }
+  button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 40%,
+      rgba(255, 255, 255, 0.2) 60%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  button:hover::before {
+    transform: translateX(100%) skewX(-20deg);
+  }
+  button:hover {
+    background: linear-gradient(135deg, #3a7ae8 0%, #176cdb 100%);
+    box-shadow: 0 10px 30px rgba(26, 115, 232, 0.6),
+                0 0 0 2px rgba(255, 255, 255, 0.6) inset;
+    transform: translateY(-5px) scale(1.01);
+  }
+  button:active {
+    background: linear-gradient(135deg, #326ecf 0%, #1460c9 100%);
+    box-shadow: 0 4px 15px rgba(26, 115, 232, 0.4);
+    transform: translateY(0) scale(1);
+  }
+
+  .features {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 48px;
+    color: #5f6368;
+  }
+  .feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .feature-item img {
+    margin-bottom: 8px;
+    width: 64px;
+    height: 64px;
+  }
+  .feature-item h3 {
+    font-weight: 500;
+    font-size: 1.1em;
+    margin-bottom: 4px;
+    color: #202124;
+  }
+  .feature-item p {
+    font-size: 0.9em;
+    margin-bottom: 0;
+  }
+
+  /* New sections styling */
+  .section {
+    width: 100%;
+    max-width: 800px; /* Max width for content sections */
+    margin: 40px auto; /* Spacing between sections */
+    padding: 40px;
+    border-radius: 26px;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  .section ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 30px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .section ul li {
+    background-color: rgba(255, 255, 255, 0.7); /* Slightly less transparent for list items */
+    padding: 20px;
+    border-radius: 15px;
+    text-align: left;
+    font-size: 1.1em;
+    color: #202124;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+  .section ul li strong {
+    color: #1a73e8;
+  }
+
+  /* Footer styling */
+  footer {
+    width: 100%;
+    max-width: 800px;
+    margin-top: 60px;
+    padding: 30px 20px;
+    text-align: center;
+    color: #5f6368;
+    font-size: 0.9em;
+    background-color: rgba(255, 255, 255, 0.3); /* Light glassy footer */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 15px 15px 0 0; /* Rounded top corners */
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Media Queries for Responsiveness */
+
+  /* Tablets (e.g., 601px to 1023px) */
+  @media (min-width: 601px) {
+    .hero-container {
+      padding: 50px;
+      border-radius: 30px;
+      max-width: 600px;
+    }
+    h1 {
+      font-size: 3em;
+    }
+    h2 {
+      font-size: 2.5em;
+    }
+    p {
+      font-size: 1.4em;
+      margin-bottom: 40px;
+    }
+    button {
+      padding: 20px 40px;
+      font-size: 1.3em;
+    }
+    .features {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .section {
+      padding: 50px;
+      border-radius: 30px;
+    }
+    .section ul {
+      grid-template-columns: 1fr 1fr; /* Two columns for list items on tablets */
+    }
+  }
+
+  /* Desktops (e.g., 1024px and up, ideal for 1920x1080) */
+  @media (min-width: 1024px) {
+    .hero-container {
+      padding: 55px;
+      border-radius: 32px;
+      max-width: 700px;
+    }
+    h1 {
+      font-size: 3.5em;
+    }
+    h2 {
+      font-size: 2.8em;
+    }
+    p {
+      font-size: 1.5em;
+      margin-bottom: 45px;
+    }
+    button {
+      padding: 22px 45px;
+      font-size: 1.4em;
+    }
+    .section {
+      padding: 55px;
+      border-radius: 32px;
+    }
+    .section ul {
+      grid-template-columns: repeat(3, 1fr); /* Three columns for list items on desktops */
+    }
+  }
+
+  /* Extra Large Desktops (e.g., 1440px and up) */
+  @media (min-width: 1440px) {
+    .hero-container {
+      max-width: 800px;
+      padding: 65px;
+    }
+    h1 {
+      font-size: 4em;
+    }
+    h2 {
+      font-size: 3.2em;
+    }
+    p {
+      font-size: 1.6em;
+    }
+    button {
+      padding: 25px 50px;
+      font-size: 1.5em;
+    }
+    .section {
+      max-width: 900px;
+      padding: 65px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="hero-container glassy-card">
+  <h1>Notto: Tu espacio para ideas claras.</h1>
+  <p>Simple, gratuita y directa al grano. Organiza tus pensamientos sin distracciones.</p>
+  <button id="startButton">Empieza ahora</button>
+
+  <div class="features">
+    <div class="feature-item">
+      <img src="/placeholder.svg?height=64&width=64" alt="Organiza Icon">
+      <h3>Organiza</h3>
+      <p>Notas por categorías.</p>
+    </div>
+    <div class="feature-item">
+      <img src="/placeholder.svg?height=64&width=64" alt="Sincroniza Icon">
+      <h3>Sincroniza</h3>
+      <p>En todos tus dispositivos.</p>
+    </div>
+    <div class="feature-item">
+      <img src="/placeholder.svg?height=64&width=64" alt="Accede Icon">
+      <h3>Accede</h3>
+      <p>Desde cualquier lugar.</p>
+    </div>
+  </div>
+</div>
+
+<div class="section glassy-card">
+  <h2>¿Por qué elegir Notto?</h2>
+  <p>Notto está diseñado para ser tu compañero ideal en la toma de notas, sin complicaciones.</p>
+  <ul>
+    <li><strong>Simplicidad Intuitiva:</strong> Interfaz limpia y fácil de usar, para que te concentres en tus ideas, no en la aplicación.</li>
+    <li><strong>Acceso Universal:</strong> Tus notas siempre contigo, disponibles en cualquier dispositivo y en cualquier momento.</li>
+    <li><strong>Gratuito y Sin Anuncios:</strong> Disfruta de todas las funcionalidades sin costos ocultos ni interrupciones.</li>
+    <li><strong>Organización Flexible:</strong> Crea, edita y organiza tus notas de la manera que mejor se adapte a tu flujo de trabajo.</li>
+    <li><strong>Rendimiento Óptimo:</strong> Una aplicación ligera y rápida, diseñada para funcionar sin problemas incluso con muchas notas.</li>
+  </ul>
+</div>
+
+<div class="section glassy-card">
+  <h2>Listo para empezar a organizar tus ideas?</h2>
+  <p>Únete a miles de usuarios que ya disfrutan de la simplicidad y eficiencia de Notto.</p>
+  <button id="secondaryCtaButton">Descarga Notto Ahora</button>
+</div>
+
+<footer>
+  <p>&copy; 2023 Notto. Todos los derechos reservados. | <a href="#" style="color: #1a73e8; text-decoration: none;">Política de Privacidad</a> | <a href="#" style="color: #1a73e8; text-decoration: none;">Términos de Servicio</a></p>
+</footer>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const startButton = document.getElementById("startButton");
+    const secondaryCtaButton = document.getElementById("secondaryCtaButton");
+
+    if (startButton) {
+      startButton.addEventListener("click", () => {
+        console.log("Redirigiendo a /login...");
+        window.location.href = '/login'; // Redirige a la página de login
+      });
+    }
+
+    if (secondaryCtaButton) {
+      secondaryCtaButton.addEventListener("click", () => {
+        console.log("¡Botón 'Descarga Notto Ahora' clicado!");
+        alert("¡Gracias por tu interés en Notto! (Simulado)");
+        // In a real application, you might redirect to a download page or app store link
+        // window.location.href = '/download.html';
+      });
+    }
+  });
+</script>
+</body>
+</html>
